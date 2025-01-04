@@ -25,9 +25,10 @@ app.post("/api", (req, res) => {
     if (users.some((u) => u.id === user.id)) {
         return res.status(400).json({ error: "Пользователь с таким ID уже существует" });
     }
-
-    users = [...users, user];
-    res.json({ message: "Массив обновлен", users });
+    setTimeout(() => {
+        users = [...users, user];
+        res.json({ message: "Массив обновлен", users });
+    }, 2000);
 });
 
 
