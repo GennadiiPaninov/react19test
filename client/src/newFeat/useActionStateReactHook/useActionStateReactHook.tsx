@@ -4,16 +4,14 @@ import s from './useActiontyle.module.scss'
 
 export const UseActionStateReactHook = () => {
     const [users, setUsers] = useState<{ name: string, id: string }[]>([])
-    const [userName, setUserName] = useState('');
-    const handleAddUser = async  (prev: string | null, FormData: {}) =>{
+    const handleAddUser = async  (prev: string | null, formData: FormData) =>{
 
-        console.log(prev, typeof FormData)
+        console.log(prev)
         try {
             const response = await axios.post("http://localhost:8080/api",
-                {user: {name: userName, id: Math.random().toString(36).substring(2, 9)}}
+                {user: {name: formData.get("name"), id: Math.random().toString(36).substring(2, 9)}}
             );
             setUsers(response.data.users); // Обновляем состояние клиента
-            setUserName(''); // Сбрасываем поле ввода
             return "User создан"
         } catch (error) {
             console.error("Ошибка при обновлении данных:", error);
@@ -32,8 +30,9 @@ export const UseActionStateReactHook = () => {
     // fn = функция действия, она принимает prev значение или начальное состояние, если вызывается впервые, а также FormData(все аргументы, которые передаются при действии)
     // initialState = начальное состояние
     //
-
-    const [state, formState, isPending ]=useActionState(handleAddUser, null)
+    // не подходит для сложных форм с более чем тремя четырьмя полями, или где используются дополнительные действия
+    // при интеграции с Server Components дает возможность обрабатывать "серверные действия" до гидрации (ускоряет UX)
+    const [state, formState, isPending ] = useActionState(handleAddUser, null)
 
     useEffect(() => {
         const fetchAPI = async () => {
@@ -55,7 +54,7 @@ export const UseActionStateReactHook = () => {
             <div className={s.container}>
                 <h2>Add User Async</h2>
                 <form className={s.userForm}>
-                    <input type="text" placeholder="Enter user name" required onChange={(e) => setUserName(e.target.value)} value={userName} name={'name'}/>
+                    <input type="text" placeholder="Enter user name" required name={'name'} disabled={isPending}/>
                     <button type="submit" formAction={formState}>{isPending ? "...loading": "add"}</button>
                 </form>
             </div>
