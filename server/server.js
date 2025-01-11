@@ -12,6 +12,7 @@ let users = [{name: "user1", id: "1"}, {name: "user2", id: "2"}, {name: "user3",
 
 app.get("/api", (req, res) => {
     res.json({ users });
+
 });
 
 app.post("/api", (req, res) => {
